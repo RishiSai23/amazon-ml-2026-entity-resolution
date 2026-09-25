@@ -1,0 +1,23 @@
+# Python / Virtual Environment
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Data & Output generated files
+output/*.tsv
+!output/.gitkeep
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+dataset/
+output/
+__pycache__/
+.pytest_cache/
+.venv/
+*.pyc
+.env
