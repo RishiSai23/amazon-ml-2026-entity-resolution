@@ -1,0 +1,230 @@
+{
+  "benchmark_metadata": {
+    "s1_sample_size": 10000,
+    "total_ground_truth_pairs": 34673,
+    "eval_timestamp": "2026-09-25 22:32:09"
+  },
+  "pair_equality_rates": {
+    "N3": {
+      "exact_name_equality_pct": 17.189167363654718,
+      "exact_address_equality_pct": 7.723588959709284,
+      "name_char_sim_mean": 0.8279739321885591,
+      "name_char_sim_median": 0.9122807017543859,
+      "addr_char_sim_mean": 0.8388637501710211,
+      "addr_char_sim_median": 0.8985507246376812
+    },
+    "N4": {
+      "exact_name_equality_pct": 17.189167363654718,
+      "exact_address_equality_pct": 10.54711158538344,
+      "name_char_sim_mean": 0.8277444405960525,
+      "name_char_sim_median": 0.9090909090909091,
+      "addr_char_sim_mean": 0.846650860897326,
+      "addr_char_sim_median": 0.90625,
+      "runtime_seconds": 26.99477243423462
+    },
+    "N5": {
+      "exact_name_equality_pct": 20.353012430421366,
+      "exact_address_equality_pct": 10.59614108960863,
+      "name_char_sim_mean": 0.8771608397539447,
+      "name_char_sim_median": 0.9142857142857143,
+      "addr_char_sim_mean": 0.8552901482641811,
+      "addr_char_sim_median": 0.9142857142857143,
+      "runtime_seconds": 23.135026693344116
+    }
+  },
+  "n4_impact_analysis": {
+    "pairs_gained_exact_address_equality": 979,
+    "pairs_lost_exact_address_equality": 0,
+    "pairs_address_similarity_increased": 1909,
+    "pairs_address_similarity_decreased": 59,
+    "concrete_examples": [
+      {
+        "s1_id": "S1-916300528",
+        "target_id": "S2-435551121",
+        "s1_addr_raw": "870 Heidelberg Road, Corydon, IN",
+        "t_addr_raw": "870 HEIDELBERG RD, CORYDON, IN",
+        "N3_s1_addr": "870 heidelberg road  corydon  in",
+        "N3_t_addr": "870 heidelberg rd  corydon  in",
+        "N4_normalized_addr": "870 heidelberg road  corydon  in"
+      },
+      {
+        "s1_id": "S1-571116875",
+        "target_id": "S2-678318292",
+        "s1_addr_raw": "1506 Independence Road, Greensboro, NC",
+        "t_addr_raw": "1506 INDEPENDENCE RD, GREENSBORO, NC",
+        "N3_s1_addr": "1506 independence road  greensboro  nc",
+        "N3_t_addr": "1506 independence rd  greensboro  nc",
+        "N4_normalized_addr": "1506 independence road  greensboro  nc"
+      },
+      {
+        "s1_id": "S1-862366458",
+        "target_id": "S2-391215579",
+        "s1_addr_raw": "5701 N Hampton Drive, Austin, TX",
+        "t_addr_raw": "5701 N HAMPTON DR, AUSTIN, TX",
+        "N3_s1_addr": "5701 n hampton drive  austin  tx",
+        "N3_t_addr": "5701 n hampton dr  austin  tx",
+        "N4_normalized_addr": "5701 n hampton drive  austin  tx"
+      },
+      {
+        "s1_id": "S1-973460432",
+        "target_id": "S2-815364400",
+        "s1_addr_raw": "4720 Pima Street, Tucson, AZ",
+        "t_addr_raw": "4720 PIMA ST, TUCSON, AZ",
+        "N3_s1_addr": "4720 pima street  tucson  az",
+        "N3_t_addr": "4720 pima st  tucson  az",
+        "N4_normalized_addr": "4720 pima street  tucson  az"
+      },
+      {
+        "s1_id": "S1-159012385",
+        "target_id": "S2-446140395",
+        "s1_addr_raw": "83 Chandelle Lane, Great Falls, MT",
+        "t_addr_raw": "#83 CHANDELLE LN, GREAT FALLS, MT",
+        "N3_s1_addr": "83 chandelle lane  great falls  mt",
+        "N3_t_addr": "83 chandelle ln  great falls  mt",
+        "N4_normalized_addr": "83 chandelle lane  great falls  mt"
+      },
+      {
+        "s1_id": "S1-215956008",
+        "target_id": "S2-477434756",
+        "s1_addr_raw": "5004 Mill Drive, Hurlock, MD",
+        "t_addr_raw": "5004 MILL DR, HURLOCK, MD",
+        "N3_s1_addr": "5004 mill drive  hurlock  md",
+        "N3_t_addr": "5004 mill dr  hurlock  md",
+        "N4_normalized_addr": "5004 mill drive  hurlock  md"
+      },
+      {
+        "s1_id": "S1-37196660",
+        "target_id": "S2-537399476",
+        "s1_addr_raw": "295 Newhaven Drive, Waukee, IA",
+        "t_addr_raw": "295 NEWHAVEN DR, WAUKEE, IA",
+        "N3_s1_addr": "295 newhaven drive  waukee  ia",
+        "N3_t_addr": "295 newhaven dr  waukee  ia",
+        "N4_normalized_addr": "295 newhaven drive  waukee  ia"
+      },
+      {
+        "s1_id": "S1-551109224",
+        "target_id": "S2-901751042",
+        "s1_addr_raw": "2 Glider Avenue, Hazard, KY",
+        "t_addr_raw": "2 GLIDER AVE, HAZARD, KY",
+        "N3_s1_addr": "2 glider avenue  hazard  ky",
+        "N3_t_addr": "2 glider ave  hazard  ky",
+        "N4_normalized_addr": "2 glider avenue  hazard  ky"
+      },
+      {
+        "s1_id": "S1-352417726",
+        "target_id": "S2-35052930",
+        "s1_addr_raw": "2433 John Avenue, City Of Superior, WI",
+        "t_addr_raw": "2433 JOHN AVE, CITY OF SUPERIOR, WI",
+        "N3_s1_addr": "2433 john avenue  city of superior  wi",
+        "N3_t_addr": "2433 john ave  city of superior  wi",
+        "N4_normalized_addr": "2433 john avenue  city of superior  wi"
+      },
+      {
+        "s1_id": "S1-228588081",
+        "target_id": "S2-587224540",
+        "s1_addr_raw": "3104 Teresa Avenue, Winston-salem, NC",
+        "t_addr_raw": "3104 TERESA AVE, WINSTON-SALEM, NC",
+        "N3_s1_addr": "3104 teresa avenue  winston salem  nc",
+        "N3_t_addr": "3104 teresa ave  winston salem  nc",
+        "N4_normalized_addr": "3104 teresa avenue  winston salem  nc"
+      }
+    ]
+  },
+  "n5_impact_analysis": {
+    "pairs_gained_exact_name_equality": 1097,
+    "pairs_gained_exact_address_equality": 17,
+    "pairs_name_similarity_increased": 3320,
+    "concrete_examples": [
+      {
+        "s1_id": "S1-106483014",
+        "target_id": "S2-658973338",
+        "s1_name_raw": "Bathinda Services Limited",
+        "t_name_raw": "Bathinda Services L\u00edmited",
+        "N4_s1_name": "bathinda services ltd",
+        "N4_t_name": "bathinda services l\u00edmited",
+        "N5_normalized_name": "bathinda services ltd"
+      },
+      {
+        "s1_id": "S1-762154341",
+        "target_id": "S2-145172853",
+        "s1_name_raw": "Watley Scientific, LLC",
+        "t_name_raw": "Watley Sc\u00edentific, LLC",
+        "N4_s1_name": "watley scientific  llc",
+        "N4_t_name": "watley sc\u00edentific  llc",
+        "N5_normalized_name": "watley scientific  llc"
+      },
+      {
+        "s1_id": "S1-22480710",
+        "target_id": "S3-574105116",
+        "s1_name_raw": "Allied Holdings LLC",
+        "t_name_raw": "Allied H\u00f3ldings LLC",
+        "N4_s1_name": "allied holdings llc",
+        "N4_t_name": "allied h\u00f3ldings llc",
+        "N5_normalized_name": "allied holdings llc"
+      },
+      {
+        "s1_id": "S1-913219631",
+        "target_id": "S3-613076014",
+        "s1_name_raw": "Andrews Ace Bce Inc",
+        "t_name_raw": "Andrews Ace Bce \u00ednc",
+        "N4_s1_name": "andrews ace bce inc",
+        "N4_t_name": "andrews ace bce \u00ednc",
+        "N5_normalized_name": "andrews ace bce inc"
+      },
+      {
+        "s1_id": "S1-910465067",
+        "target_id": "S2-530448879",
+        "s1_name_raw": "Gwyneth's All Painting",
+        "t_name_raw": "Gwyneth's \u00c1ll Painting",
+        "N4_s1_name": "gwyneth s all painting",
+        "N4_t_name": "gwyneth s \u00e1ll painting",
+        "N5_normalized_name": "gwyneth s all painting"
+      },
+      {
+        "s1_id": "S1-583520728",
+        "target_id": "S3-870818703",
+        "s1_name_raw": "I J Rose Pinnacle",
+        "t_name_raw": "I J Rose P\u00ednnacle",
+        "N4_s1_name": "i j rose pinnacle",
+        "N4_t_name": "i j rose p\u00ednnacle",
+        "N5_normalized_name": "i j rose pinnacle"
+      },
+      {
+        "s1_id": "S1-617994631",
+        "target_id": "S2-426758434",
+        "s1_name_raw": "Knapp and Hicks Post",
+        "t_name_raw": "Knapp \u00e1nd Hicks Post",
+        "N4_s1_name": "knapp and hicks post",
+        "N4_t_name": "knapp \u00e1nd hicks post",
+        "N5_normalized_name": "knapp and hicks post"
+      },
+      {
+        "s1_id": "S1-228588081",
+        "target_id": "S3-214579929",
+        "s1_name_raw": "Claro, Ralston and Dewitt LLC",
+        "t_name_raw": "Claro, Ralston \u00e1nd Dewitt LLC",
+        "N4_s1_name": "claro  ralston and dewitt llc",
+        "N4_t_name": "claro  ralston \u00e1nd dewitt llc",
+        "N5_normalized_name": "claro  ralston and dewitt llc"
+      },
+      {
+        "s1_id": "S1-129888634",
+        "target_id": "S3-952322542",
+        "s1_name_raw": "Donella Wilkerson Custom Vista LLC",
+        "t_name_raw": "Donella W\u00edlkerson Custom Vista LLC",
+        "N4_s1_name": "donella wilkerson custom vista llc",
+        "N4_t_name": "donella w\u00edlkerson custom vista llc",
+        "N5_normalized_name": "donella wilkerson custom vista llc"
+      },
+      {
+        "s1_id": "S1-255795404",
+        "target_id": "S3-434920254",
+        "s1_name_raw": "Technologies Auras Assets Private Limited",
+        "t_name_raw": "Technologies Auras Assets Pr\u00edvate Limited",
+        "N4_s1_name": "technologies auras assets pvt_ltd",
+        "N4_t_name": "technologies auras assets pr\u00edvate ltd",
+        "N5_normalized_name": "technologies auras assets pvt_ltd"
+      }
+    ]
+  }
+}

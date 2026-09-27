@@ -24,7 +24,7 @@ class PipelineConfig:
     legal_suffixes: Set[str] = field(default_factory=lambda: {
         "ltd", "limited", "pvt", "private", "inc", "incorporated", 
         "corp", "corporation", "llc", "co", "company", "plc", "gmbh", 
-        "sa", "bv", "nv", "srl"
+        "sa", "bv", "nv", "srl", "pvt_ltd", "llp", "sarl"
     })
     
     # Blocking Parameters
@@ -35,7 +35,17 @@ class PipelineConfig:
     enable_address_token_block: bool = True
     enable_char_signature_block: bool = True
     
-    # Matching / Scoring Engine Parameters
+    # Deterministic Scoring Engine Weights & Thresholds
+    w_name_exact: float = 0.35
+    w_name_char: float = 0.25
+    w_core_jaccard: float = 0.15
+    w_address_exact: float = 0.25
+    w_address_char: float = 0.20
+    w_address_jaccard: float = 0.10
+    penalty_numeric_mismatch: float = -0.25
+    penalty_suffix_mismatch: float = -0.15
+    
+    # Legacy Weights (for backwards compatibility)
     name_weight: float = 0.50
     address_weight: float = 0.35
     country_weight: float = 0.15

@@ -1,0 +1,94 @@
+{
+  "benchmark_metadata": {
+    "benchmark_s1_size": 10000,
+    "total_ground_truth_pairs": 34691,
+    "stratification": "Country (60% US, 40% India) & Match Cardinality Buckets (0, 1, 2, 3, 4+)",
+    "gt_lookup": "O(1) dictionary map",
+    "block_size_cap": 5000,
+    "seed": 42
+  },
+  "normalization_variants": {
+    "N0_baseline": {
+      "description": "Lowercase + Basic Punctuation Stripping",
+      "union_recall": 95.24,
+      "ground_truth_retained": "33,040 / 34,691",
+      "exact_name_recall": 13.53,
+      "name_token_recall": 55.95,
+      "address_token_recall": 87.21,
+      "char_signature_recall": 21.69,
+      "candidates_per_s1": {
+        "mean": 4545.7,
+        "median": 4160,
+        "p95": 10140,
+        "p99": 13258
+      },
+      "runtime_seconds": 233.54
+    },
+    "N1_unicode_punct": {
+      "description": "N0 + Fast C-level str.translate() punctuation stripping",
+      "union_recall": 95.24,
+      "ground_truth_retained": "33,040 / 34,691",
+      "exact_name_recall": 13.53,
+      "name_token_recall": 55.95,
+      "address_token_recall": 87.21,
+      "char_signature_recall": 21.69,
+      "candidates_per_s1": {
+        "mean": 4545.7,
+        "median": 4160,
+        "p95": 10140,
+        "p99": 13258
+      },
+      "runtime_seconds": 311.39
+    },
+    "N2_accent_stripping": {
+      "description": "N1 + Accent/Diacritic Stripping (é->e, à->a, ö->o, etc.)",
+      "union_recall": 95.27,
+      "ground_truth_retained": "33,050 / 34,691",
+      "exact_name_recall": 14.29,
+      "name_token_recall": 56.09,
+      "address_token_recall": 87.21,
+      "char_signature_recall": 21.72,
+      "candidates_per_s1": {
+        "mean": 4552.3,
+        "median": 4168,
+        "p95": 10142,
+        "p99": 13258
+      },
+      "runtime_seconds": 247.64
+    },
+    "N3_legal_canonicalization": {
+      "description": "N2 + Corporate Legal Suffix Standardization (private limited -> pvt_ltd, inc, corp, llc)",
+      "union_recall": 95.44,
+      "ground_truth_retained": "33,109 / 34,691",
+      "exact_name_recall": 17.27,
+      "name_token_recall": 56.05,
+      "address_token_recall": 87.21,
+      "char_signature_recall": 21.79,
+      "candidates_per_s1": {
+        "mean": 4553.9,
+        "median": 4167,
+        "p95": 10128,
+        "p99": 13258
+      },
+      "runtime_seconds": 668.79
+    },
+    "N4_address_canonicalization_diagnostic": {
+      "description": "N3 + Street/Road/Avenue Abbreviation Normalization (Pair-level Diagnostic)",
+      "exact_name_equality_rate": 17.19,
+      "exact_address_equality_rate": 10.55,
+      "exact_address_gain": "+2.83% (+979 true pairs gained)",
+      "mean_addr_char_similarity": 0.8467,
+      "median_addr_char_similarity": 0.9063,
+      "diagnostic_runtime_seconds": 26.99
+    },
+    "N5_transliteration_diagnostic": {
+      "description": "N4 + anyascii Transliteration for Non-ASCII Characters (Pair-level Diagnostic)",
+      "exact_name_equality_rate": 20.35,
+      "exact_address_equality_rate": 10.60,
+      "exact_name_gain": "+3.16% (+1,097 true pairs gained)",
+      "mean_name_char_similarity": 0.8772,
+      "median_name_char_similarity": 0.9143,
+      "diagnostic_runtime_seconds": 23.14
+    }
+  }
+}
