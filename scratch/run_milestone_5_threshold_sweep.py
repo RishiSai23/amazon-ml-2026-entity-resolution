@@ -7,9 +7,16 @@ performs Error Analysis on the best threshold, and saves json + markdown artifac
 import time
 import json
 import string
+import sys
 import numpy as np
 import pandas as pd
 from pathlib import Path
+
+# Add workspace root to sys.path to allow imports from src
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from src.config import PipelineConfig
 from src.normalize import normalize_dataframe
 from src.blocking import generate_candidate_pairs
@@ -35,14 +42,35 @@ def main():
     print("[1/5] Loading datasets (high performance sub-sample mode)...", flush=True)
     req_cols = ["entity_id", "business_name", "business_address", "country"]
     
-    # Load FULL ground truth (120MB, 2.2M rows, fast load in 1s)
-    gt_df = pd.read_csv(train_dir + "train_ground_truth.tsv", sep="\t")
-    gt_map = parse_ground_truth_map(gt_df)
-    s1_match_counts = {s1_id: len(m_ids) for s1_id, m_ids in gt_map.items()}
+        # Read S1 (first 50k rows)
+    s1_df = pd.read_csv(train_dir + "train_source1.tsv", sep="\t", usecols=req_cols, nrows=50000, on_bad_lines="skip", low_memory=False)
+    s1_ids_set = set(s1_df["entity_id"])
 
-    # Read S1 (first 100k rows)
-    s1_df = pd.read_csv(train_dir + "train_source1.tsv", sep="\t", usecols=req_cols, nrows=100000)
-    s1_df["match_count"] = s1_df["entity_id"].map(s1_match_counts).fillna(0).astype(int)
+    # Load ground truth filtered to loaded S1 entities
+    gt_df = pd.read_csv(
+        train_dir + "train_ground_truth.tsv",
+        sep="\t",
+        usecols=["source1_entity_id", "matched_entity_ids"],
+        dtype=str,
+        on_bad_lines="skip",
+        low_memory=False
+    )
+    gt_sub = gt_df[gt_df["source1_entity_id"].isin(s1_ids_set)].copy()
+
+    matched = gt_sub["matched_entity_ids"].fillna("").str.strip()
+
+    # Number of matched IDs per S1:
+    # "" -> 0
+    # "S2-x" -> 1
+    # "S2-x,S3-y" -> 2
+    s1_match_counts = np.where(matched.eq(""), 0, matched.str.count(",") + 1)
+
+    gt_counts_df = pd.DataFrame({
+        "entity_id": gt_sub["source1_entity_id"],
+        "match_count": s1_match_counts
+    })
+    s1_df = s1_df.merge(gt_counts_df, on="entity_id", how="left")
+    s1_df["match_count"] = s1_df["match_count"].fillna(0).astype(int)
     
     def get_cardinality_bucket(c):
         if c == 0: return "0"
@@ -54,8 +82,8 @@ def main():
     s1_df["card_bucket"] = s1_df["match_count"].apply(get_cardinality_bucket)
     s1_df["strat_key"] = s1_df["country"].astype(str) + "_" + s1_df["card_bucket"]
 
-    # Stratified 5,000 S1 sample (seed=42)
-    benchmark_size = 5000
+    # Stratified 500 S1 sample (seed=42)
+    benchmark_size = 2000
     print(f"[2/5] Sampling {benchmark_size:,} S1 entities stratified by Country & Match Cardinality...", flush=True)
     np.random.seed(42)
     strat_counts = s1_df["strat_key"].value_counts(normalize=True)
@@ -72,14 +100,15 @@ def main():
     sampled_s1_ids = list(s1_sample_raw["entity_id"])
     sampled_gt_df = gt_df[gt_df["source1_entity_id"].isin(sampled_s1_ids)].copy()
     
+    sample_gt_map = parse_ground_truth_map(sampled_gt_df)
     sample_gt_pairs = parse_ground_truth_pairs(sampled_gt_df)
     gt_target_ids = {p[1] for p in sample_gt_pairs}
     print(f"Benchmark Sample: {len(s1_sample_raw):,} S1 entities, {len(sample_gt_pairs):,} Ground-Truth Pairs ({len(gt_target_ids):,} unique targets).", flush=True)
 
-    # Load S2 and S3 candidates (500k rows each)
+    # Load S2 and S3 candidates (250k rows each)
     print("Loading candidate datasets (Source 2 & Source 3)...", flush=True)
-    s2_df = pd.read_csv(train_dir + "train_source2.tsv", sep="\t", usecols=req_cols, nrows=500000)
-    s3_df = pd.read_csv(train_dir + "train_source3.tsv", sep="\t", usecols=req_cols, nrows=500000)
+    s2_df = pd.read_csv(train_dir + "train_source2.tsv", sep="\t", usecols=req_cols, nrows=250000, on_bad_lines="skip", low_memory=False)
+    s3_df = pd.read_csv(train_dir + "train_source3.tsv", sep="\t", usecols=req_cols, nrows=250000, on_bad_lines="skip", low_memory=False)
 
     # Chunked missing target fetch
     loaded_s2_ids = set(s2_df["entity_id"])
@@ -89,7 +118,7 @@ def main():
     if missing_targets:
         print(f"  Fetching {len(missing_targets):,} missing ground-truth target records using fast chunking...", flush=True)
         extra_s2 = []
-        for chunk in pd.read_csv(train_dir + "train_source2.tsv", sep="\t", usecols=req_cols, chunksize=500000):
+        for chunk in pd.read_csv(train_dir + "train_source2.tsv", sep="\t", usecols=req_cols, chunksize=500000, on_bad_lines="skip", low_memory=False):
             sub = chunk[chunk["entity_id"].isin(missing_targets)]
             if not sub.empty:
                 extra_s2.append(sub)
@@ -97,7 +126,7 @@ def main():
             s2_df = pd.concat([s2_df] + extra_s2).drop_duplicates(subset=["entity_id"])
 
         extra_s3 = []
-        for chunk in pd.read_csv(train_dir + "train_source3.tsv", sep="\t", usecols=req_cols, chunksize=500000):
+        for chunk in pd.read_csv(train_dir + "train_source3.tsv", sep="\t", usecols=req_cols, chunksize=500000, on_bad_lines="skip", low_memory=False):
             sub = chunk[chunk["entity_id"].isin(missing_targets)]
             if not sub.empty:
                 extra_s3.append(sub)
@@ -234,7 +263,7 @@ def main():
     fp_samples = [make_error_record(p[0], p[1], "False Positive") for p in fp_pairs[:10]]
     fn_samples = [make_error_record(p[0], p[1], "False Negative") for p in fn_pairs[:10]]
 
-    zero_gt_s1 = {s1_id for s1_id, m_ids in gt_map.items() if len(m_ids) == 0 and s1_id in set(sampled_s1_ids)}
+    zero_gt_s1 = {s1_id for s1_id, m_ids in sample_gt_map.items() if len(m_ids) == 0 and s1_id in set(sampled_s1_ids)}
     zero_gt_fp_samples = []
     for s1_id in list(zero_gt_s1):
         pred_cands = best_predictions[best_predictions["source1_entity_id"] == s1_id]

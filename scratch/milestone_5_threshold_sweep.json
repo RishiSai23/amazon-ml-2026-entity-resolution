@@ -1,0 +1,157 @@
+{
+  "benchmark_metadata": {
+    "s1_benchmark_size": 2000,
+    "total_ground_truth_pairs": 6924,
+    "candidate_pair_count": 1151228,
+    "candidate_recall_pct": 98.77,
+    "best_threshold": 0.5,
+    "best_macro_f05": 0.7479,
+    "runtime_seconds": 348.79
+  },
+  "threshold_sweep": [
+    {
+      "threshold": 0.5,
+      "macro_precision": 0.8624,
+      "macro_recall": 0.5622,
+      "macro_f05": 0.7479,
+      "pair_precision": 0.9976,
+      "pair_recall": 0.5358,
+      "pair_f05": 0.8509,
+      "predicted_pair_count": 3719,
+      "false_positive_pairs": 9,
+      "false_negative_pairs": 3214
+    },
+    {
+      "threshold": 0.55,
+      "macro_precision": 0.8205,
+      "macro_recall": 0.4971,
+      "macro_f05": 0.6937,
+      "pair_precision": 0.9988,
+      "pair_recall": 0.4681,
+      "pair_f05": 0.8142,
+      "predicted_pair_count": 3245,
+      "false_positive_pairs": 4,
+      "false_negative_pairs": 3683
+    },
+    {
+      "threshold": 0.6,
+      "macro_precision": 0.7755,
+      "macro_recall": 0.4569,
+      "macro_f05": 0.6484,
+      "pair_precision": 1.0,
+      "pair_recall": 0.4262,
+      "pair_f05": 0.7879,
+      "predicted_pair_count": 2951,
+      "false_positive_pairs": 0,
+      "false_negative_pairs": 3973
+    },
+    {
+      "threshold": 0.65,
+      "macro_precision": 0.698,
+      "macro_recall": 0.3794,
+      "macro_f05": 0.5667,
+      "pair_precision": 1.0,
+      "pair_recall": 0.3452,
+      "pair_f05": 0.7249,
+      "predicted_pair_count": 2390,
+      "false_positive_pairs": 0,
+      "false_negative_pairs": 4534
+    },
+    {
+      "threshold": 0.7,
+      "macro_precision": 0.521,
+      "macro_recall": 0.2527,
+      "macro_f05": 0.4025,
+      "pair_precision": 1.0,
+      "pair_recall": 0.2127,
+      "pair_f05": 0.5747,
+      "predicted_pair_count": 1473,
+      "false_positive_pairs": 0,
+      "false_negative_pairs": 5451
+    },
+    {
+      "threshold": 0.75,
+      "macro_precision": 0.507,
+      "macro_recall": 0.2421,
+      "macro_f05": 0.3888,
+      "pair_precision": 1.0,
+      "pair_recall": 0.2002,
+      "pair_f05": 0.5558,
+      "predicted_pair_count": 1386,
+      "false_positive_pairs": 0,
+      "false_negative_pairs": 5538
+    },
+    {
+      "threshold": 0.8,
+      "macro_precision": 0.475,
+      "macro_recall": 0.2245,
+      "macro_f05": 0.3617,
+      "pair_precision": 1.0,
+      "pair_recall": 0.1801,
+      "pair_f05": 0.5234,
+      "predicted_pair_count": 1247,
+      "false_positive_pairs": 0,
+      "false_negative_pairs": 5677
+    },
+    {
+      "threshold": 0.85,
+      "macro_precision": 0.454,
+      "macro_recall": 0.2117,
+      "macro_f05": 0.3431,
+      "pair_precision": 1.0,
+      "pair_recall": 0.1664,
+      "pair_f05": 0.4995,
+      "predicted_pair_count": 1152,
+      "false_positive_pairs": 0,
+      "false_negative_pairs": 5772
+    },
+    {
+      "threshold": 0.9,
+      "macro_precision": 0.269,
+      "macro_recall": 0.1297,
+      "macro_f05": 0.2026,
+      "pair_precision": 1.0,
+      "pair_recall": 0.077,
+      "pair_f05": 0.2943,
+      "predicted_pair_count": 533,
+      "false_positive_pairs": 0,
+      "false_negative_pairs": 6391
+    },
+    {
+      "threshold": 0.92,
+      "macro_precision": 0.1465,
+      "macro_recall": 0.086,
+      "macro_f05": 0.1174,
+      "pair_precision": 1.0,
+      "pair_recall": 0.0315,
+      "pair_f05": 0.1398,
+      "predicted_pair_count": 218,
+      "false_positive_pairs": 0,
+      "false_negative_pairs": 6706
+    },
+    {
+      "threshold": 0.94,
+      "macro_precision": 0.1375,
+      "macro_recall": 0.0832,
+      "macro_f05": 0.1114,
+      "pair_precision": 1.0,
+      "pair_recall": 0.0283,
+      "pair_f05": 0.1271,
+      "predicted_pair_count": 196,
+      "false_positive_pairs": 0,
+      "false_negative_pairs": 6728
+    },
+    {
+      "threshold": 0.96,
+      "macro_precision": 0.1375,
+      "macro_recall": 0.0832,
+      "macro_f05": 0.1114,
+      "pair_precision": 1.0,
+      "pair_recall": 0.0283,
+      "pair_f05": 0.1271,
+      "predicted_pair_count": 196,
+      "false_positive_pairs": 0,
+      "false_negative_pairs": 6728
+    }
+  ]
+}

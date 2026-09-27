@@ -5,6 +5,13 @@ import numpy as np
 import pandas as pd
 from src.config import PipelineConfig
 
+def _get_series(df: pd.DataFrame, col: str, default_val: float = 0.0) -> pd.Series:
+    """Safely extract a Series column from DataFrame or return default-filled Series."""
+    if col in df.columns:
+        return df[col]
+    return pd.Series(default_val, index=df.index)
+
+
 def compute_composite_score(df: pd.DataFrame, config: PipelineConfig) -> pd.Series:
     """Compute transparent multi-signal score for candidate pairs.
     
@@ -26,29 +33,30 @@ def compute_composite_score(df: pd.DataFrame, config: PipelineConfig) -> pd.Seri
     if df.empty:
         return pd.Series(dtype=float)
         
-    def _get_series(col: str, default_val: float) -> pd.Series:
-        if col in df.columns:
-            return df[col]
-        return pd.Series(default_val, index=df.index)
-        
+    # Name and Address feature extraction
+    addr_char_s = _get_series(df, "address_char_similarity", 0.0)
+    name_char_s = _get_series(df, "name_char_similarity", 0.0)
+    name_sort_s = _get_series(df, "name_token_sort_similarity", 0.0)
+    name_sim_effective = np.maximum(name_char_s, name_sort_s)
+
     # Name signal component
     name_sim = (
-        config.w_name_exact * _get_series("name_exact", 0.0) +
-        config.w_name_char * _get_series("name_char_similarity", 0.0) +
-        config.w_core_jaccard * _get_series("core_name_jaccard", 0.0)
+        config.w_name_exact * _get_series(df, "name_exact", 0.0) +
+        config.w_name_char * name_sim_effective +
+        config.w_core_jaccard * _get_series(df, "core_name_jaccard", 0.0)
     )
     
     # Address signal component
     addr_sim = (
-        config.w_address_exact * _get_series("address_exact", 0.0) +
-        config.w_address_char * _get_series("address_char_similarity", 0.0) +
-        config.w_address_jaccard * _get_series("address_jaccard", 0.0)
+        config.w_address_exact * _get_series(df, "address_exact", 0.0) +
+        config.w_address_char * _get_series(df, "address_char_similarity", 0.0) +
+        config.w_address_jaccard * _get_series(df, "address_jaccard", 0.0)
     )
     
     # Auxiliary signals
-    num_signal = _get_series("numeric_agreement_indicator", 0.5)
-    suffix_signal = _get_series("suffix_agreement", 0.5)
-    country_signal = _get_series("country_match", 1.0)
+    num_signal = _get_series(df, "numeric_agreement_indicator", 0.5)
+    suffix_signal = _get_series(df, "suffix_agreement", 0.5)
+    country_signal = _get_series(df, "country_match", 1.0)
     
     # Base weighted raw score
     raw_score = (
@@ -60,19 +68,32 @@ def compute_composite_score(df: pd.DataFrame, config: PipelineConfig) -> pd.Seri
     )
     
     # Strong Evidence Boosts
-    exact_name = _get_series("name_exact", 0.0) == 1.0
-    exact_addr = _get_series("address_exact", 0.0) == 1.0
-    high_name_char = _get_series("name_char_similarity", 0.0) > 0.85
-    high_addr_char = _get_series("address_char_similarity", 0.0) > 0.80
+    exact_name = _get_series(df, "name_exact", 0.0) == 1.0
+    exact_addr = _get_series(df, "address_exact", 0.0) == 1.0
+    high_name_char = name_sim_effective > 0.85
+    high_addr_char = addr_char_s > 0.80
+    high_addr = high_addr_char
     
     both_exact_boost = (exact_name & exact_addr).astype(float) * 0.20
-    name_exact_high_addr_boost = (exact_name & (_get_series("address_char_similarity", 0.0) > 0.50)).astype(float) * 0.10
-    addr_exact_high_name_boost = (exact_addr & (_get_series("name_char_similarity", 0.0) > 0.60)).astype(float) * 0.10
+    name_exact_high_addr_boost = (exact_name & (addr_char_s > 0.50)).astype(float) * 0.10
+    addr_exact_high_name_boost = (exact_addr & (name_sim_effective > 0.60)).astype(float) * 0.10
     strong_both_boost = (high_name_char & high_addr_char).astype(float) * 0.10
+    strong_address_boost = (high_addr & (num_signal >= 0.5)).astype(float) * 0.12
     
     # Weak Evidence Penalties
-    num_mismatch_penalty = (num_signal == 0.0).astype(float) * config.penalty_numeric_mismatch
+    num_mismatch_penalty = (
+        (num_signal == 0.0) & (addr_char_s < 0.55)
+    ).astype(float) * config.penalty_numeric_mismatch
     suffix_mismatch_penalty = (suffix_signal == 0.0).astype(float) * config.penalty_suffix_mismatch
+    
+    # Strong contradiction:
+    # Exact normalized names are not sufficient when addresses have
+    # strong evidence of being different.
+    address_conflict_penalty = (
+        exact_name
+        & (addr_char_s < 0.50)
+        & (num_signal == 0.0)
+    ).astype(float) * -0.15
     
     total_score = (
         raw_score +
@@ -80,8 +101,10 @@ def compute_composite_score(df: pd.DataFrame, config: PipelineConfig) -> pd.Seri
         name_exact_high_addr_boost +
         addr_exact_high_name_boost +
         strong_both_boost +
+        strong_address_boost +
         num_mismatch_penalty +
-        suffix_mismatch_penalty
+        suffix_mismatch_penalty +
+        address_conflict_penalty
     )
     
     return total_score.clip(0.0, 1.0)
