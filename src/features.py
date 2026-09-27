@@ -119,6 +119,10 @@ def extract_pairwise_features(
         name_exact = 1.0 if s1_name == cand_name and s1_name != "" else 0.0
         name_jaccard = jaccard_similarity(s1_ntokens, cand_ntokens)
         name_char_sim = fuzz.ratio(s1_name, cand_name) / 100.0 if (s1_name or cand_name) else 0.0
+        name_token_sort_sim = (
+            fuzz.token_sort_ratio(s1_name, cand_name) / 100.0
+            if (s1_name or cand_name) else 0.0
+        )
         name_edit_sim = distance.Levenshtein.normalized_similarity(s1_name, cand_name) if (s1_name or cand_name) else 0.0
         name_token_overlap = count_token_overlap(s1_ntokens, cand_ntokens)
         name_len_diff = abs(len(s1_name) - len(cand_name))
@@ -162,6 +166,7 @@ def extract_pairwise_features(
             "name_len_ratio": name_len_ratio,
             "core_name_token_overlap": core_name_token_overlap,
             "core_name_jaccard": core_name_jaccard,
+            "name_token_sort_similarity": name_token_sort_sim,
             "suffix_agreement": suffix_agreement,
             "address_exact": address_exact,
             "address_jaccard": address_jaccard,

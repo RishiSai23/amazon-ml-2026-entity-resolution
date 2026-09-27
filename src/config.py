@@ -36,10 +36,10 @@ class PipelineConfig:
     enable_char_signature_block: bool = True
     
     # Deterministic Scoring Engine Weights & Thresholds
-    w_name_exact: float = 0.35
+    w_name_exact: float = 0.25
     w_name_char: float = 0.25
     w_core_jaccard: float = 0.15
-    w_address_exact: float = 0.25
+    w_address_exact: float = 0.35
     w_address_char: float = 0.20
     w_address_jaccard: float = 0.10
     penalty_numeric_mismatch: float = -0.25
@@ -54,6 +54,9 @@ class PipelineConfig:
     # F0.5 evaluation metric weight beta
     beta_f05: float = 0.5
     
+    # RAM-safe test inference
+    inference_chunk_size: int = 1000
+    streaming_db_name: str = "test_inference.sqlite"
     def __post_init__(self):
         """Ensure paths exist."""
         self.output_dir.mkdir(parents=True, exist_ok=True)

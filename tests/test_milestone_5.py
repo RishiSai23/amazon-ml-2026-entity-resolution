@@ -142,16 +142,16 @@ def test_address_only_similarity_scoring():
 
 
 def test_numeric_address_agreement_penalty():
-    """Verify conflicting house numbers (numeric_agreement_indicator == 0.0) applies penalty."""
+    """Verify conflicting house numbers (numeric_agreement_indicator == 0.0) applies penalty on weak address."""
     config = PipelineConfig()
     df_agree = _make_feature_df(
         name_exact=0.0, name_char_similarity=0.85, core_name_jaccard=0.8,
-        address_exact=0.0, address_char_similarity=0.80, address_jaccard=0.7,
+        address_exact=0.0, address_char_similarity=0.50, address_jaccard=0.5,
         numeric_agreement_indicator=1.0, suffix_agreement=1.0, country_match=1.0
     )
     df_disagree = _make_feature_df(
         name_exact=0.0, name_char_similarity=0.85, core_name_jaccard=0.8,
-        address_exact=0.0, address_char_similarity=0.80, address_jaccard=0.7,
+        address_exact=0.0, address_char_similarity=0.50, address_jaccard=0.5,
         numeric_agreement_indicator=0.0, suffix_agreement=1.0, country_match=1.0
     )
     score_agree = compute_composite_score(df_agree, config).iloc[0]

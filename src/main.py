@@ -3,7 +3,7 @@
 import argparse
 import sys
 from pathlib import Path
-
+from src.streaming import run_streaming_test_pipeline
 # Add project root to sys.path
 BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
@@ -28,7 +28,12 @@ def run_pipeline(mode: str = "mock", threshold: float = None) -> None:
     config = PipelineConfig()
     if threshold is not None:
         config.match_threshold = threshold
-        
+    
+        # Test inference uses the RAM-safe streaming architecture.
+    # mock/train intentionally retain the original validated pipeline.
+    if mode == "test":
+        run_streaming_test_pipeline(config)
+        return
     print("=" * 65)
     print(f"  AMAZON ML CHALLENGE 2026 — ENTITY RESOLUTION PIPELINE")
     print(f"  Execution Mode: {mode.upper()} | Threshold: {config.match_threshold:.2f}")
